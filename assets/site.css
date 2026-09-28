@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&display=swap");
+
+:root {
+  --bg: #0a0907;
+  --bg-2: #13110d;
+  --panel: #16130f;
+  --panel-edge: #4a3f2c;
+  --panel-edge-hi: #7a6a48;
+  --text: #d8d2c4;
+  --muted: #8d8778;
+  --gold: #c7b377;        /* unique / runeword name */
+  --magic: #7878ff;       /* magic property text */
+  --orange: #e8a33d;      /* rune / crafted text */
+  --red: #d44a3a;
+  --white: #e6e6e6;
+  --gray: #8a8a8a;        /* socketed / base text */
+  --title-font: "Cinzel", "Trajan Pro", Georgia, serif;
+  --body-font: "Crimson Pro", Georgia, serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background:
+    radial-gradient(ellipse at 50% -10%, #2a2115 0%, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--body-font);
+  font-size: 17px;
+  line-height: 1.4;
+  min-height: 100vh;
+}
+
+a { color: var(--gold); }
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #2b241a;
+  background: linear-gradient(#17130e, #0e0c09);
+}
+
+.site-header .logo {
+  font-family: var(--title-font);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-decoration: none;
+  text-shadow: 0 0 12px rgba(199, 179, 119, .25);
+}
+
+.site-header nav { display: flex; gap: 18px; flex-wrap: wrap; }
+
+.site-header nav a {
+  font-family: var(--title-font);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.site-header nav a:hover,
+.site-header nav a[aria-current="page"] { color: var(--gold); }
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+h1, h2, h3 {
+  font-family: var(--title-font);
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.panel {
+  background: linear-gradient(#1a1611, #110f0b);
+  border: 2px solid var(--panel-edge);
+  box-shadow:
+    inset 0 0 0 1px #000,
+    inset 0 0 24px rgba(0, 0, 0, .8),
+    0 6px 24px rgba(0, 0, 0, .6);
+  border-radius: 3px;
+}
+
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 24px 16px 40px;
+}

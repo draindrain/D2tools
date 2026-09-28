@@ -1,0 +1,317 @@
+/* ---- Rune stash ---------------------------------------------------------- */
+
+.stash {
+  max-width: 900px;
+  margin: 0 auto 20px;
+  padding: 14px 18px 12px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 2px, transparent 2px 5px),
+    linear-gradient(#1b1712, #0f0d0a);
+}
+
+.stash-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stash-head h1 {
+  margin: 0;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.stash-actions { display: flex; gap: 8px; }
+
+.btn {
+  font-family: var(--title-font);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+  background: linear-gradient(#2c251b, #17130e);
+  border: 1px solid var(--panel-edge);
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.btn:hover { border-color: var(--panel-edge-hi); color: var(--gold); }
+
+.rune-grid {
+  display: grid;
+  gap: 10px 6px;
+}
+
+.rune-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 11), minmax(0, 1fr));
+  gap: 6px;
+}
+
+.rune {
+  position: relative;
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 2px 5px;
+  background: linear-gradient(#0b0a08, #14110d);
+  border: 1px solid #2d261c;
+  box-shadow: inset 0 0 10px #000, inset 0 0 0 1px #000;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  border-radius: 2px;
+  transition: border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rune:hover { border-color: #5b4d33; }
+.rune:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+.rune svg {
+  width: 100%;
+  max-width: 54px;
+  aspect-ratio: 1;
+  display: block;
+  filter: grayscale(1) brightness(.32) contrast(1.1);
+  transition: filter .2s;
+}
+
+.rune .rune-name {
+  font-family: var(--title-font);
+  font-size: 12px;
+  font-weight: 600;
+  color: #4d463a;
+  letter-spacing: .5px;
+  line-height: 1;
+  transition: color .2s;
+}
+
+.rune .rune-num {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 10px;
+  color: #3d372d;
+  font-family: var(--title-font);
+}
+
+.rune[aria-pressed="true"] {
+  border-color: #8a6a32;
+  background: radial-gradient(circle at 50% 40%, rgba(232,163,61,.18), transparent 70%), #0e0c09;
+}
+
+.rune[aria-pressed="true"] svg {
+  filter: drop-shadow(0 0 6px rgba(255, 170, 60, .55));
+}
+
+.rune[aria-pressed="true"] .rune-name { color: var(--orange); }
+.rune[aria-pressed="true"] .rune-num { color: #8a7650; }
+
+.stone-glyph {
+  font-family: var(--title-font);
+  font-weight: 700;
+  fill: #3a1d07;
+  paint-order: stroke;
+  stroke: rgba(255, 225, 170, .35);
+  stroke-width: 1px;
+}
+
+.stash-hint {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 620px) {
+  .stash { padding: 12px 8px 10px; }
+  .rune-grid { gap: 6px; }
+  .rune-row { gap: 3px; }
+  .rune { padding: 4px 0 3px; }
+  .rune .rune-name { font-size: 9px; letter-spacing: 0; }
+  .rune .rune-num { display: none; }
+}
+
+/* ---- Filters ------------------------------------------------------------- */
+
+.filters {
+  max-width: 900px;
+  margin: 0 auto 28px;
+  padding: 14px 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.filter-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.filter-label {
+  font-family: var(--title-font);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-width: 44px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.filter-grid label { display: grid; gap: 4px; }
+
+select, input[type="search"] {
+  font-family: var(--body-font);
+  font-size: 16px;
+  color: var(--text);
+  background: #0c0b08;
+  border: 1px solid var(--panel-edge);
+  padding: 6px 8px;
+  border-radius: 2px;
+  width: 100%;
+}
+
+select:focus, input:focus { outline: 1px solid var(--gold); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  font-family: var(--title-font);
+  font-size: 13px;
+  color: var(--muted);
+  background: #0c0b08;
+  border: 1px solid #3a3124;
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+  color: var(--gold);
+  border-color: #8a7446;
+  background: linear-gradient(#2a2217, #16120d);
+}
+
+.chip .tier-letter { font-weight: 700; }
+
+.filter-note { margin: 0; font-size: 14px; color: var(--muted); }
+
+/* ---- Results ------------------------------------------------------------- */
+
+.slot-section { margin-bottom: 32px; }
+
+.slot-section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 20px;
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #2b241a;
+}
+
+.slot-section h2 .count { font-size: 14px; color: var(--muted); font-family: var(--body-font); }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.tile {
+  position: relative;
+  background: rgba(4, 4, 4, .92);
+  border: 1px solid #2c2c2c;
+  box-shadow: 0 4px 18px rgba(0,0,0,.6);
+  padding: 14px 14px 12px;
+  text-align: center;
+  font-family: var(--body-font);
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.tile.partial { opacity: .78; border-style: dashed; }
+
+.tile-name {
+  font-family: var(--title-font);
+  color: var(--gold);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 22px 2px;
+}
+
+.tile-bases { color: var(--gray); font-size: 15px; }
+
+.tile-runes { color: var(--gold); margin: 4px 0; letter-spacing: .3px; }
+.tile-runes .missing { color: var(--red); }
+
+.tile-level { color: var(--white); font-size: 15px; }
+.tile-level.too-high { color: var(--red); }
+
+.tile-stats { list-style: none; padding: 0; margin: 8px 0 0; color: var(--magic); }
+.tile-stats li { margin: 1px 0; }
+
+.tile-note { color: var(--gray); font-size: 14px; font-style: italic; margin-top: 6px; }
+
+.tier-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  font-family: var(--title-font);
+  font-weight: 700;
+  font-size: 14px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+
+.tier-S { color: #ff8a3d; }
+.tier-A { color: #c7b377; }
+.tier-B { color: #4fd06a; }
+.tier-C { color: #7878ff; }
+.tier-D { color: #9a9a9a; }
+.tier-F { color: #6a6a6a; }
+
+.tile-usage {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #1f1f1f;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.use-chip {
+  font-size: 13px;
+  color: #b8b0a0;
+  background: #121110;
+  border: 1px solid #2a2722;
+  padding: 1px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.use-chip b { font-weight: 600; }
+
+.empty {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--muted);
+  padding: 32px 16px;
+}
+
+.empty strong { color: var(--gold); font-family: var(--title-font); font-weight: 600; }

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rune Tab · D2 Tools</title>
+  <meta name="description" content="Light up the runes you own and see which Diablo II: Resurrected runewords you can make.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="runes.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../">D2 Tools</a>
+    <nav>
+      <a href="./" aria-current="page">Rune Tab</a>
+    </nav>
+  </header>
+
+  <!-- Shared gradients for the rune stones -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="stone-fill" cx="38%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#f3c47a"/>
+        <stop offset="45%" stop-color="#c9843a"/>
+        <stop offset="100%" stop-color="#6e3d16"/>
+      </radialGradient>
+      <linearGradient id="stone-rim" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffe0a8"/>
+        <stop offset="100%" stop-color="#3b200b"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <main>
+    <section class="stash panel" aria-labelledby="stash-title">
+      <div class="stash-head">
+        <h1 id="stash-title">Runes</h1>
+        <div class="stash-actions">
+          <button type="button" class="btn" data-action="all">Light all</button>
+          <button type="button" class="btn" data-action="clear">Clear</button>
+        </div>
+      </div>
+      <div class="rune-grid" id="rune-grid" role="group" aria-label="Runes – click to light up the ones you have"></div>
+      <p class="stash-hint">Click a rune to light it up. Your selection is saved and can be shared with the page link.</p>
+    </section>
+
+    <section class="filters panel" aria-label="Filters">
+      <div class="filter-row">
+        <span class="filter-label">Slot</span>
+        <div class="chips" id="slot-chips"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Tier</span>
+        <div class="chips" id="tier-chips"></div>
+      </div>
+      <div class="filter-row filter-grid">
+        <label>
+          <span class="filter-label">Class</span>
+          <select id="class-select"></select>
+        </label>
+        <label>
+          <span class="filter-label">Show</span>
+          <select id="match-select">
+            <option value="0">Can make now</option>
+            <option value="1">Missing at most 1 rune</option>
+            <option value="2">Missing at most 2 runes</option>
+            <option value="all">All runewords</option>
+          </select>
+        </label>
+        <label>
+          <span class="filter-label">Sort</span>
+          <select id="sort-select">
+            <option value="tier">Tier</option>
+            <option value="level">Required level</option>
+            <option value="name">Name</option>
+          </select>
+        </label>
+        <label>
+          <span class="filter-label">Search</span>
+          <input id="search" type="search" placeholder="Name or stat, e.g. teleport" autocomplete="off">
+        </label>
+      </div>
+      <p class="filter-note" id="filter-note"></p>
+    </section>
+
+    <div id="results" aria-live="polite"></div>
+  </main>
+
+  <footer class="site-footer">
+    Tiers and class usage from the <a href="https://maxroll.gg/d2/tierlists/runeword-tier-list">maxroll.gg Runeword Tier List</a>
+    and <a href="https://maxroll.gg/d2/tierlists/overall-tier-list">Late Game build guides</a>.
+    Not affiliated with Blizzard Entertainment.
+  </footer>
+</body>
+</html>
