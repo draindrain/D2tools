@@ -1,30 +1,207 @@
-/* ---- Rune stash ---------------------------------------------------------- */
+/* ---- Rune stash (modelled on the D2R stash Runes tab) --------------------- */
 
 .stash {
-  max-width: 900px;
-  margin: 0 auto 20px;
-  padding: 14px 18px 12px;
-  background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 2px, transparent 2px 5px),
-    linear-gradient(#1b1712, #0f0d0a);
+  --cell: min(54px, calc((100vw - 32px - 64px - 8 * var(--gap)) / 9));
+  --gap: 5px;
+  --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.2 .9'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --blotch: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .45 -.2'/></filter><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
+  width: fit-content;
+  margin: 0 auto;
+  padding: 6px;
+  background: var(--noise), linear-gradient(#5b5b5b, #3c3c3c);
+  border: 2px solid #1b1b1b;
+  box-shadow:
+    inset 0 0 0 2px #7a7a7a,
+    inset 0 0 0 4px #2a2a2a,
+    inset 0 0 0 5px #8c8c8c,
+    0 10px 40px rgba(0, 0, 0, .8);
+  border-radius: 2px;
 }
 
-.stash-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+.stash-title {
+  text-align: center;
+  padding: 10px 0 8px;
 }
 
-.stash-head h1 {
+.stash-title h1 {
   margin: 0;
   font-size: 22px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #d9c38a;
+  text-shadow: 0 2px 2px #000;
 }
 
-.stash-actions { display: flex; gap: 8px; }
+.stash-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  margin: 0 8px;
+}
+
+.stash-tabs span {
+  font-family: var(--title-font);
+  font-size: clamp(9px, 2.2vw, 12px);
+  font-variant: small-caps;
+  letter-spacing: 1.5px;
+  color: #9d9a92;
+  text-align: center;
+  padding: 5px 2px;
+  background: var(--noise), linear-gradient(#383838, #262626);
+  border: 1px solid #5c5c5c;
+  box-shadow: inset 0 0 0 1px #111;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.stash-tabs span.active {
+  color: #efe6cf;
+  background: var(--noise), linear-gradient(#4d4d4d, #3a3a3a);
+  border-color: #a38a4e;
+}
+
+.stash-body {
+  margin: 4px 8px 8px;
+  padding: 14px 14px 18px;
+  background: var(--blotch), var(--noise), #4a4a4a;
+  border: 1px solid #1d1d1d;
+  box-shadow: inset 0 0 0 1px #6c6c6c, inset 0 0 18px rgba(0, 0, 0, .6);
+}
+
+.stash-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(9, var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+}
+
+/* The raised stone block that holds the cube, and its side wings. */
+.raised {
+  background: var(--blotch), var(--noise), #575757;
+  border: 1px solid #262626;
+  box-shadow: inset 0 0 0 1px #7b7b7b, inset 0 0 0 5px #4b4b4b, inset 0 0 0 6px #6a6a6a, 0 0 6px rgba(0,0,0,.5);
+}
+
+.cube-block { grid-column: 3 / 8; grid-row: 4 / 12; margin-top: calc(var(--cell) * .7); }
+.wing { grid-row: 7 / 12; margin-top: calc(var(--cell) * .35); }
+.wing-left { grid-column: 1 / 3; }
+.wing-right { grid-column: 8 / 10; }
+
+.ornament {
+  z-index: 1;
+  grid-row: 7 / 9;
+  margin: calc(var(--cell) * .55) calc(var(--gap) + 4px) calc(var(--cell) * .05);
+  display: grid;
+  place-items: center;
+  background: var(--noise), #3e3e3e;
+  border: 1px solid #1b1b1b;
+  box-shadow: inset 0 0 0 1px #9c7f3e, inset 0 0 0 4px #333, inset 0 0 0 5px #6d5a2c;
+}
+.ornament svg { width: 55%; height: 55%; filter: drop-shadow(0 1px 1px #000); }
+.ornament-left { grid-column: 1 / 3; }
+.ornament-right { grid-column: 8 / 10; }
+
+.cube {
+  z-index: 1;
+  grid-column: 4 / 7;
+  grid-row: 6 / 10;
+  margin: calc(var(--cell) * -.12);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;
+  padding: 5px;
+  background: #0a0a0a;
+  border: 3px solid #c29a45;
+  box-shadow:
+    inset 0 0 0 1px #3a2a0d,
+    0 0 0 1px #3a2a0d,
+    0 0 0 4px #7c5e22,
+    0 0 0 5px #1a1206,
+    0 4px 12px rgba(0,0,0,.7);
+}
+
+.cube-cell {
+  background: #050505;
+  box-shadow: inset 0 0 0 1px #2c2c2c, inset 0 0 8px #000;
+  display: grid;
+  place-items: center;
+}
+.cube-cell svg { width: 92%; height: 92%; }
+
+.transmute {
+  z-index: 1;
+  grid-column: 5 / 6;
+  grid-row: 10 / 11;
+  margin-top: calc(var(--cell) * .45);
+  display: grid;
+  place-items: center;
+  background: linear-gradient(#6b4b17, #3b280a);
+  border: 2px solid #caa24c;
+  box-shadow: 0 0 0 1px #1b1206, inset 0 0 6px #000;
+}
+.transmute svg { width: 70%; height: 70%; }
+
+/* Rune slots */
+.rune {
+  position: relative;
+  z-index: 2;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  width: var(--cell);
+  height: var(--cell);
+  background: #121212;
+  border: 1px solid #5f5543;
+  box-shadow: 0 0 0 1px #151515, inset 0 0 0 1px #000, inset 0 0 10px #000;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rune svg { display: block; width: 100%; height: 100%; }
+
+.rune:hover { border-color: #9a8a66; }
+.rune:focus-visible { outline: 2px solid #d9c38a; outline-offset: 1px; }
+
+.st { stroke: #1a1a1a; stroke-width: .8; }
+.st-lit, .lit .st-dim { display: none; }
+.lit .st-lit { display: inline; }
+.st-tex { opacity: .35; }
+.gl { fill: #232323; }
+.gl-hi { fill: rgba(255, 255, 255, .05); }
+
+.lit .st { stroke: #4f4d49; }
+.lit .st-tex { opacity: .28; }
+.lit .gl { fill: #1b1915; }
+.lit .gl-hi { fill: rgba(255, 255, 255, .42); }
+
+.rune:hover .st { filter: brightness(1.12); }
+
+/* In-game style item tooltip for runes */
+.rune-tip {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, .9);
+  border: 1px solid #333;
+  text-align: center;
+  font-family: var(--body-font);
+  font-size: 15px;
+  line-height: 1.3;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+}
+.rune-tip .n { color: var(--orange); font-family: var(--title-font); font-weight: 600; }
+.rune-tip .l { color: var(--white); }
+
+.stash-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 6px;
+}
 
 .btn {
   font-family: var(--title-font);
@@ -41,103 +218,21 @@
 
 .btn:hover { border-color: var(--panel-edge-hi); color: var(--gold); }
 
-.rune-grid {
-  display: grid;
-  gap: 10px 6px;
-}
-
-.rune-row {
-  display: grid;
-  grid-template-columns: repeat(var(--cols, 11), minmax(0, 1fr));
-  gap: 6px;
-}
-
-.rune {
-  position: relative;
-  appearance: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 6px 2px 5px;
-  background: linear-gradient(#0b0a08, #14110d);
-  border: 1px solid #2d261c;
-  box-shadow: inset 0 0 10px #000, inset 0 0 0 1px #000;
-  cursor: pointer;
-  color: inherit;
-  font: inherit;
-  border-radius: 2px;
-  transition: border-color .15s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.rune:hover { border-color: #5b4d33; }
-.rune:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
-
-.rune svg {
-  width: 100%;
-  max-width: 54px;
-  aspect-ratio: 1;
-  display: block;
-  filter: grayscale(1) brightness(.32) contrast(1.1);
-  transition: filter .2s;
-}
-
-.rune .rune-name {
-  font-family: var(--title-font);
-  font-size: 12px;
-  font-weight: 600;
-  color: #4d463a;
-  letter-spacing: .5px;
-  line-height: 1;
-  transition: color .2s;
-}
-
-.rune .rune-num {
-  position: absolute;
-  top: 2px;
-  left: 4px;
-  font-size: 10px;
-  color: #3d372d;
-  font-family: var(--title-font);
-}
-
-.rune[aria-pressed="true"] {
-  border-color: #8a6a32;
-  background: radial-gradient(circle at 50% 40%, rgba(232,163,61,.18), transparent 70%), #0e0c09;
-}
-
-.rune[aria-pressed="true"] svg {
-  filter: drop-shadow(0 0 6px rgba(255, 170, 60, .55));
-}
-
-.rune[aria-pressed="true"] .rune-name { color: var(--orange); }
-.rune[aria-pressed="true"] .rune-num { color: #8a7650; }
-
-.stone-glyph {
-  font-family: var(--title-font);
-  font-weight: 700;
-  fill: #3a1d07;
-  paint-order: stroke;
-  stroke: rgba(255, 225, 170, .35);
-  stroke-width: 1px;
-}
-
 .stash-hint {
-  margin: 10px 0 0;
+  margin: 0 auto 20px;
+  max-width: 600px;
   font-size: 14px;
   color: var(--muted);
   text-align: center;
 }
 
 @media (max-width: 620px) {
-  .stash { padding: 12px 8px 10px; }
-  .rune-grid { gap: 6px; }
-  .rune-row { gap: 3px; }
-  .rune { padding: 4px 0 3px; }
-  .rune .rune-name { font-size: 9px; letter-spacing: 0; }
-  .rune .rune-num { display: none; }
+  .stash { --gap: 3px; --cell: calc((100vw - 32px - 36px - 8 * var(--gap)) / 9); padding: 4px; }
+  .stash-body { margin: 4px 4px 6px; padding: 8px 6px 10px; }
+  .stash-tabs { margin: 0 4px; }
 }
+
+.tile.previewed { border-color: #8a7446; }
 
 /* ---- Filters ------------------------------------------------------------- */
 

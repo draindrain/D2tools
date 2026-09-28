@@ -22,10 +22,14 @@ export const RUNES = [
   ["Jah", 65], ["Cham", 67], ["Zod", 69],
 ].map(([name, level], i) => ({ name, level, number: i + 1 }));
 
+// Matches the in-game Runes tab: 9 columns, with the last runes wrapping
+// around the Horadric Cube in the middle (null = empty space).
 export const RUNE_LAYOUT = [
-  ["El", "Eld", "Tir", "Nef", "Eth", "Ith", "Tal", "Ral", "Ort", "Thul", "Amn"],
-  ["Sol", "Shael", "Dol", "Hel", "Io", "Lum", "Ko", "Fal", "Lem", "Pul", "Um"],
-  ["Mal", "Ist", "Gul", "Vex", "Ohm", "Lo", "Sur", "Ber", "Jah", "Cham", "Zod"],
+  ["El", "Eld", "Tir", "Nef", "Eth", "Ith", "Tal", "Ral", "Ort"],
+  ["Thul", "Amn", "Sol", "Shael", "Dol", "Hel", "Io", "Lum", "Ko"],
+  ["Fal", "Lem", "Pul", "Um", "Mal", "Ist", "Gul", "Vex", "Ohm"],
+  ["Lo", "Sur", null, null, null, null, null, "Ber", "Jah"],
+  ["Cham", null, null, null, null, null, null, null, "Zod"],
 ];
 
 export const CLASSES = [

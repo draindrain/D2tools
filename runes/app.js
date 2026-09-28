@@ -1,4 +1,5 @@
 import { RUNES, RUNE_LAYOUT, RUNEWORDS, RUNEWORD_TIERS, BUILDS, CLASSES, SLOTS } from "./data.js";
+import { GLYPHS } from "./glyphs.js";
 
 const TIERS = Object.keys(RUNEWORD_TIERS);
 const DEFAULT_TIERS = ["S", "A", "B", "C"];
@@ -76,49 +77,45 @@ function save() {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+function addGlyphDefs() {
+  const defs = document.getElementById("rune-defs");
+  for (const [name, d] of Object.entries(GLYPHS)) {
+    const path = document.createElementNS(SVG_NS, "path");
+    path.id = `glyph-${name}`;
+    path.setAttribute("d", d);
+    defs.append(path);
+  }
+}
+
 function stoneSvg(name) {
-  const size = name.length <= 2 ? 19 : name.length === 3 ? 17 : name.length === 4 ? 14 : 12;
   const svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("viewBox", "0 0 64 64");
+  svg.setAttribute("viewBox", "0 0 46 46");
   svg.setAttribute("aria-hidden", "true");
   svg.innerHTML = `
-    <path d="M32 5 C44 5 55 11 58 23 C61 35 57 49 46 56 C38 61 25 61 17 55 C7 48 3 35 7 22 C10 12 20 5 32 5 Z"
-          fill="url(#stone-fill)" stroke="url(#stone-rim)" stroke-width="2"/>
-    <path d="M18 16 C24 10 36 9 44 13" fill="none" stroke="rgba(255,236,200,.45)" stroke-width="2" stroke-linecap="round"/>
-    <text class="stone-glyph" x="32" y="${35 + size * 0.33}" text-anchor="middle" font-size="${size}">${name}</text>`;
+    <use href="#stone" class="st st-dim" fill="url(#stone-dim)"/>
+    <use href="#stone" class="st st-lit" fill="url(#stone-lit)"/>
+    <use href="#stone" class="st-tex" filter="url(#stone-noise)"/>
+    <use href="#glyph-${name}" class="gl-hi" transform="translate(.45 .6)"/>
+    <use href="#glyph-${name}" class="gl"/>`;
   return svg;
 }
 
 function renderStash() {
+  addGlyphDefs();
   const grid = document.getElementById("rune-grid");
-  grid.replaceChildren();
-  for (const row of RUNE_LAYOUT) {
-    const rowEl = document.createElement("div");
-    rowEl.className = "rune-row";
-    rowEl.style.setProperty("--cols", Math.max(...RUNE_LAYOUT.map((r) => r.length)));
-    for (const name of row) {
-      const rune = RUNE_BY_NAME.get(name.toLowerCase());
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "rune";
-      btn.dataset.rune = rune.name;
-      btn.title = `${rune.name} Rune (#${rune.number}) · Required level ${rune.level}`;
-      btn.setAttribute("aria-label", `${rune.name} rune`);
-      btn.setAttribute("aria-pressed", String(state.selected.has(rune.name)));
-
-      const num = document.createElement("span");
-      num.className = "rune-num";
-      num.textContent = rune.number;
-
-      const label = document.createElement("span");
-      label.className = "rune-name";
-      label.textContent = rune.name;
-
-      btn.append(num, stoneSvg(rune.name), label);
-      rowEl.append(btn);
-    }
-    grid.append(rowEl);
-  }
+  RUNE_LAYOUT.forEach((row, r) => row.forEach((name, c) => {
+    if (!name) return;
+    const rune = RUNE_BY_NAME.get(name.toLowerCase());
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "rune";
+    btn.style.gridArea = `${r + 1} / ${c + 1}`;
+    btn.dataset.rune = rune.name;
+    btn.setAttribute("aria-label", `${rune.name} Rune`);
+    btn.append(stoneSvg(rune.name));
+    grid.append(btn);
+  }));
+  syncStash();
 
   grid.addEventListener("click", (e) => {
     const btn = e.target.closest(".rune");
@@ -126,15 +123,82 @@ function renderStash() {
     const name = btn.dataset.rune;
     if (state.selected.has(name)) state.selected.delete(name);
     else state.selected.add(name);
-    btn.setAttribute("aria-pressed", String(state.selected.has(name)));
+    syncStash();
     update();
   });
+
+  // In-game style tooltip
+  const tip = document.getElementById("rune-tip");
+  const show = (btn) => {
+    const rune = RUNE_BY_NAME.get(btn.dataset.rune.toLowerCase());
+    tip.innerHTML = `<div class="n">${rune.name} Rune</div><div class="l">Required Level: ${rune.level}</div>`;
+    const r = btn.getBoundingClientRect();
+    tip.style.left = `${r.left + r.width / 2}px`;
+    tip.style.top = `${r.top - 6}px`;
+    tip.hidden = false;
+  };
+  const hide = () => { tip.hidden = true; };
+  grid.addEventListener("pointerover", (e) => { const b = e.target.closest(".rune"); if (b) show(b); });
+  grid.addEventListener("pointerout", (e) => { if (e.target.closest(".rune")) hide(); });
+  grid.addEventListener("focusin", (e) => { const b = e.target.closest(".rune"); if (b) show(b); });
+  grid.addEventListener("focusout", hide);
+  window.addEventListener("scroll", hide, { passive: true });
+
+  renderCube(null);
 }
 
 function syncStash() {
   for (const btn of document.querySelectorAll(".rune")) {
-    btn.setAttribute("aria-pressed", String(state.selected.has(btn.dataset.rune)));
+    const lit = state.selected.has(btn.dataset.rune);
+    btn.classList.toggle("lit", lit);
+    btn.setAttribute("aria-pressed", String(lit));
   }
+}
+
+// ---- Horadric Cube preview ----------------------------------------------------
+
+let pinned = null;
+
+function renderCube(rw) {
+  const cube = document.getElementById("cube");
+  const cells = [];
+  for (let i = 0; i < 12; i++) {
+    const cell = document.createElement("div");
+    cell.className = "cube-cell";
+    const name = rw?.runes[i];
+    if (name) {
+      const svg = stoneSvg(name);
+      if (state.selected.has(name)) svg.classList.add("lit");
+      cell.append(svg);
+      cell.title = `${name} Rune`;
+    }
+    cells.push(cell);
+  }
+  cube.replaceChildren(...cells);
+}
+
+function setupCubePreview() {
+  const results = document.getElementById("results");
+  const byName = new Map(RUNEWORDS.map((rw) => [rw.name, rw]));
+  const tileFor = (e) => e.target.closest(".tile");
+  const markPinned = () => {
+    for (const t of results.querySelectorAll(".tile")) {
+      t.classList.toggle("previewed", t.dataset.name === pinned);
+    }
+  };
+  results.addEventListener("pointerover", (e) => {
+    const t = tileFor(e);
+    if (t) renderCube(byName.get(t.dataset.name));
+  });
+  results.addEventListener("pointerleave", () => renderCube(byName.get(pinned) || null));
+  results.addEventListener("click", (e) => {
+    const t = tileFor(e);
+    if (!t) return;
+    pinned = pinned === t.dataset.name ? null : t.dataset.name;
+    renderCube(byName.get(pinned) || byName.get(t.dataset.name));
+    markPinned();
+  });
+  return markPinned;
 }
 
 // ---- Filters ----------------------------------------------------------------
@@ -288,6 +352,7 @@ function tile(rw) {
   const missing = missingRunes(rw);
   const el = document.createElement("article");
   el.className = "tile" + (missing.length && state.selected.size ? " partial" : "");
+  el.dataset.name = rw.name;
 
   const runes = rw.runes
     .map((r) => (missing.includes(r) && state.selected.size ? `<span class="missing">${r}</span>` : r))
@@ -364,13 +429,18 @@ function renderResults() {
   }
 }
 
+let markPinned = () => {};
+
 function update() {
   renderFilters();
   renderResults();
+  markPinned();
+  if (pinned) renderCube(RUNEWORDS.find((rw) => rw.name === pinned));
   save();
 }
 
 load();
 renderStash();
 setupControls();
+markPinned = setupCubePreview();
 update();

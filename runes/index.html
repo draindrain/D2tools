@@ -17,33 +17,54 @@
     </nav>
   </header>
 
-  <!-- Shared gradients for the rune stones -->
+  <!-- Shared paint for the rune stones; glyph paths are added by app.js -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <radialGradient id="stone-fill" cx="38%" cy="30%" r="75%">
-        <stop offset="0%" stop-color="#f3c47a"/>
-        <stop offset="45%" stop-color="#c9843a"/>
-        <stop offset="100%" stop-color="#6e3d16"/>
-      </radialGradient>
-      <linearGradient id="stone-rim" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#ffe0a8"/>
-        <stop offset="100%" stop-color="#3b200b"/>
+    <defs id="rune-defs">
+      <linearGradient id="stone-lit" x1="0" y1="0" x2="0.35" y2="1">
+        <stop offset="0%" stop-color="#e2e1dd"/>
+        <stop offset="55%" stop-color="#bcbbb6"/>
+        <stop offset="100%" stop-color="#8f8e89"/>
       </linearGradient>
+      <linearGradient id="stone-dim" x1="0" y1="0" x2="0.35" y2="1">
+        <stop offset="0%" stop-color="#4b4b4a"/>
+        <stop offset="100%" stop-color="#303030"/>
+      </linearGradient>
+      <filter id="stone-noise" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="7" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.05" result="speck"/>
+        <feComposite in="speck" in2="SourceAlpha" operator="in"/>
+      </filter>
+      <path id="compass" d="M20 2L23 17L38 20L23 23L20 38L17 23L2 20L17 17Z" fill="#cfae5c" stroke="#5a4515" stroke-width=".6"/>
+      <path id="stone" d="M13.5 5.5C17 4.2 29 4.2 32.5 5.5C34.5 6.2 35.5 7.5 36.3 9.5L43.8 35.5C45 39.5 44 42.6 40 43.2C29 44.6 17 44.6 6 43.2C2 42.6 1 39.5 2.2 35.5L9.7 9.5C10.5 7.5 11.5 6.2 13.5 5.5Z"/>
     </defs>
   </svg>
 
   <main>
-    <section class="stash panel" aria-labelledby="stash-title">
-      <div class="stash-head">
-        <h1 id="stash-title">Runes</h1>
-        <div class="stash-actions">
-          <button type="button" class="btn" data-action="all">Light all</button>
-          <button type="button" class="btn" data-action="clear">Clear</button>
+    <section class="stash" aria-labelledby="stash-title">
+      <div class="stash-title"><h1 id="stash-title">Stash</h1></div>
+      <div class="stash-tabs" aria-hidden="true">
+        <span>Personal</span><span>Shared</span><span>Gems</span><span>Materials</span><span class="active">Runes</span>
+      </div>
+      <div class="stash-body">
+        <div class="stash-grid" id="rune-grid" role="group" aria-label="Runes – click to light up the ones you have">
+          <div class="raised cube-block" aria-hidden="true"></div>
+          <div class="raised wing wing-left" aria-hidden="true"></div>
+          <div class="raised wing wing-right" aria-hidden="true"></div>
+          <div class="ornament ornament-left" aria-hidden="true"><svg viewBox="0 0 40 40"><use href="#compass"/></svg></div>
+          <div class="ornament ornament-right" aria-hidden="true"><svg viewBox="0 0 40 40"><use href="#compass"/></svg></div>
+          <div class="cube" id="cube" aria-label="Horadric Cube – shows the runes of the runeword you point at"></div>
+          <div class="transmute" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M11 28c0-6 3-9 8-9h6c4 0 6-2 6-5s-2-5-5-5h-3" fill="none" stroke="#e7c870" stroke-width="3" stroke-linecap="round"/><circle cx="11" cy="29" r="3" fill="#e7c870"/><path d="M26 25h8M30 21v8" stroke="#e7c870" stroke-width="2.4" stroke-linecap="round"/></svg>
+          </div>
         </div>
       </div>
-      <div class="rune-grid" id="rune-grid" role="group" aria-label="Runes – click to light up the ones you have"></div>
-      <p class="stash-hint">Click a rune to light it up. Your selection is saved and can be shared with the page link.</p>
     </section>
+    <div class="stash-actions">
+      <button type="button" class="btn" data-action="all">Light all</button>
+      <button type="button" class="btn" data-action="clear">Clear</button>
+    </div>
+    <p class="stash-hint">Click a rune to light it up. Point at a runeword to see its runes in the cube. Your selection is saved in the page link.</p>
+    <div class="rune-tip" id="rune-tip" hidden></div>
 
     <section class="filters panel" aria-label="Filters">
       <div class="filter-row">

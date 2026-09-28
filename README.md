@@ -10,7 +10,8 @@ A plain static site with no build step: HTML, CSS and ES modules.
   D2R stash Runes tab, and see which runewords you can make. You can filter by item
   slot, maxroll tier (D and F are hidden by default), class, and missing runes.
   - Rune, runeword, tier and build data lives in `runes/data.js`.
-  - The grid arrangement is set by `RUNE_LAYOUT` in `runes/data.js`.
+  - The grid follows the in-game Runes tab (9 columns wrapping around the Horadric Cube), set by `RUNE_LAYOUT` in `runes/data.js`.
+  - Rune glyphs in `runes/glyphs.js` are vector outlines traced from an in-game screenshot.
   - Tiers come from the [maxroll.gg Runeword Tier List](https://maxroll.gg/d2/tierlists/runeword-tier-list).
     Class usefulness comes from the runewords used in the
     [maxroll.gg Late Game Tier List](https://maxroll.gg/d2/tierlists/overall-tier-list) build guides.
