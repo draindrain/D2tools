@@ -1,4 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap");
+
+/* The Diablo II font (Exocet). It is commercial, so it is not bundled: it is
+   used when installed on the viewer's machine, or when a licensed copy is
+   placed at assets/fonts/exocet.woff2 (or .otf). Cinzel is the fallback. */
+@font-face {
+  font-family: "D2 Exocet";
+  src:
+    local("Exocet Blizzard Medium"), local("ExocetBlizzardMedium"),
+    local("Exocet Blizzard"), local("Exocet Heavy"), local("Exocet"),
+    url("fonts/exocet.woff2") format("woff2"),
+    url("fonts/exocet.otf") format("opentype");
+  font-display: swap;
+}
 
 :root {
   --bg: #0a0907;
@@ -14,8 +27,8 @@
   --red: #d44a3a;
   --white: #e6e6e6;
   --gray: #8a8a8a;        /* socketed / base text */
-  --title-font: "Cinzel", "Trajan Pro", Georgia, serif;
-  --body-font: "Crimson Pro", Georgia, serif;
+  --title-font: "D2 Exocet", "Cinzel", Georgia, serif;
+  --body-font: "D2 Exocet", "Cinzel", Georgia, serif;
   color-scheme: dark;
 }
 
@@ -29,7 +42,8 @@ body {
     var(--bg);
   color: var(--text);
   font-family: var(--body-font);
-  font-size: 17px;
+  font-size: 16px;
+  font-synthesis: none;
   line-height: 1.4;
   min-height: 100vh;
 }
