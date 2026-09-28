@@ -1,15 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap");
 
-/* The Diablo II font (Exocet). It is commercial, so it is not bundled: it is
-   used when installed on the viewer's machine, or when a licensed copy is
-   placed at assets/fonts/exocet.woff2 (or .otf). Cinzel is the fallback. */
+/* The Diablo II font (Exocet) is used when installed on the viewer's
+   machine; otherwise Cinzel is the fallback. */
 @font-face {
   font-family: "D2 Exocet";
   src:
     local("Exocet Blizzard Medium"), local("ExocetBlizzardMedium"),
-    local("Exocet Blizzard"), local("Exocet Heavy"), local("Exocet"),
-    url("fonts/exocet.woff2") format("woff2"),
-    url("fonts/exocet.otf") format("opentype");
+    local("Exocet Blizzard"), local("Exocet Heavy"), local("Exocet");
   font-display: swap;
 }
 
