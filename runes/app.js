@@ -127,15 +127,26 @@ function renderStash() {
     update();
   });
 
-  // In-game style tooltip
+  // In-game style item tooltip
   const tip = document.getElementById("rune-tip");
   const show = (btn) => {
     const rune = RUNE_BY_NAME.get(btn.dataset.rune.toLowerCase());
-    tip.innerHTML = `<div class="n">${rune.name} Rune</div><div class="l">Required Level: ${rune.level}</div>`;
-    const r = btn.getBoundingClientRect();
-    tip.style.left = `${r.left + r.width / 2}px`;
-    tip.style.top = `${r.top - 6}px`;
+    const { weapons, armor, helms, shields } = rune.mods;
+    tip.innerHTML = `
+      <div class="n">${rune.name} Rune</div>
+      <div class="sub">Can be Inserted into Socketed Items</div>
+      <div>Weapons: ${weapons}</div>
+      <div>Armor: ${armor}</div>
+      <div>Helms: ${helms}</div>
+      <div>Shields: ${shields}</div>
+      <div class="req">Required Level: ${rune.level}</div>`;
     tip.hidden = false;
+    const r = btn.getBoundingClientRect();
+    const t = tip.getBoundingClientRect();
+    const left = Math.min(Math.max(8, r.left + r.width / 2 - t.width / 2), window.innerWidth - t.width - 8);
+    const above = r.top - t.height - 6;
+    tip.style.left = `${left}px`;
+    tip.style.top = `${above >= 8 ? above : r.bottom + 6}px`;
   };
   const hide = () => { tip.hidden = true; };
   grid.addEventListener("pointerover", (e) => { const b = e.target.closest(".rune"); if (b) show(b); });
@@ -143,8 +154,6 @@ function renderStash() {
   grid.addEventListener("focusin", (e) => { const b = e.target.closest(".rune"); if (b) show(b); });
   grid.addEventListener("focusout", hide);
   window.addEventListener("scroll", hide, { passive: true });
-
-  renderCube(null);
 }
 
 function syncStash() {
@@ -153,52 +162,6 @@ function syncStash() {
     btn.classList.toggle("lit", lit);
     btn.setAttribute("aria-pressed", String(lit));
   }
-}
-
-// ---- Horadric Cube preview ----------------------------------------------------
-
-let pinned = null;
-
-function renderCube(rw) {
-  const cube = document.getElementById("cube");
-  const cells = [];
-  for (let i = 0; i < 12; i++) {
-    const cell = document.createElement("div");
-    cell.className = "cube-cell";
-    const name = rw?.runes[i];
-    if (name) {
-      const svg = stoneSvg(name);
-      if (state.selected.has(name)) svg.classList.add("lit");
-      cell.append(svg);
-      cell.title = `${name} Rune`;
-    }
-    cells.push(cell);
-  }
-  cube.replaceChildren(...cells);
-}
-
-function setupCubePreview() {
-  const results = document.getElementById("results");
-  const byName = new Map(RUNEWORDS.map((rw) => [rw.name, rw]));
-  const tileFor = (e) => e.target.closest(".tile");
-  const markPinned = () => {
-    for (const t of results.querySelectorAll(".tile")) {
-      t.classList.toggle("previewed", t.dataset.name === pinned);
-    }
-  };
-  results.addEventListener("pointerover", (e) => {
-    const t = tileFor(e);
-    if (t) renderCube(byName.get(t.dataset.name));
-  });
-  results.addEventListener("pointerleave", () => renderCube(byName.get(pinned) || null));
-  results.addEventListener("click", (e) => {
-    const t = tileFor(e);
-    if (!t) return;
-    pinned = pinned === t.dataset.name ? null : t.dataset.name;
-    renderCube(byName.get(pinned) || byName.get(t.dataset.name));
-    markPinned();
-  });
-  return markPinned;
 }
 
 // ---- Filters ----------------------------------------------------------------
@@ -352,7 +315,6 @@ function tile(rw) {
   const missing = missingRunes(rw);
   const el = document.createElement("article");
   el.className = "tile" + (missing.length && state.selected.size ? " partial" : "");
-  el.dataset.name = rw.name;
 
   const runes = rw.runes
     .map((r) => (missing.includes(r) && state.selected.size ? `<span class="missing">${r}</span>` : r))
@@ -429,18 +391,13 @@ function renderResults() {
   }
 }
 
-let markPinned = () => {};
-
 function update() {
   renderFilters();
   renderResults();
-  markPinned();
-  if (pinned) renderCube(RUNEWORDS.find((rw) => rw.name === pinned));
   save();
 }
 
 load();
 renderStash();
 setupControls();
-markPinned = setupCubePreview();
 update();

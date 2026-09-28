@@ -1,6 +1,6 @@
 // Rune and runeword data for the Rune Tab tool.
 //
-// RUNES: number, name, character level required.
+// RUNES: number, name, character level required, socket bonuses.
 // RUNE_LAYOUT: rows of rune names as they appear in the stash Runes tab.
 //   Edit this to change how the grid is arranged.
 // RUNEWORDS: one entry per runeword.
@@ -13,17 +13,49 @@
 //   guide uses on the character (`uses`) and on the mercenary (`merc`).
 //   Class usefulness is derived from these.
 
+// Socket bonuses per item type, as listed in the in-game rune tooltip:
+// [weapons, armor, helms, shields]. A string applies to all four.
 export const RUNES = [
-  ["El", 11], ["Eld", 11], ["Tir", 13], ["Nef", 13], ["Eth", 15], ["Ith", 15],
-  ["Tal", 17], ["Ral", 19], ["Ort", 21], ["Thul", 23], ["Amn", 25], ["Sol", 27],
-  ["Shael", 29], ["Dol", 31], ["Hel", 33], ["Io", 35], ["Lum", 37], ["Ko", 39],
-  ["Fal", 41], ["Lem", 43], ["Pul", 45], ["Um", 47], ["Mal", 49], ["Ist", 51],
-  ["Gul", 53], ["Vex", 55], ["Ohm", 57], ["Lo", 59], ["Sur", 61], ["Ber", 63],
-  ["Jah", 65], ["Cham", 67], ["Zod", 69],
-].map(([name, level], i) => ({ name, level, number: i + 1 }));
+  ["El", 11, ["+50 to Attack Rating, +1 to Light Radius", "+15 Defense, +1 to Light Radius", "+15 Defense, +1 to Light Radius", "+15 Defense, +1 to Light Radius"]],
+  ["Eld", 11, ["+75% Damage to Undead, +50 to Attack Rating against Undead", "15% Slower Stamina Drain", "15% Slower Stamina Drain", "7% Increased Chance of Blocking"]],
+  ["Tir", 13, "+2 to Mana after each Kill"],
+  ["Nef", 13, ["Knockback", "+30 Defense vs. Missile", "+30 Defense vs. Missile", "+30 Defense vs. Missile"]],
+  ["Eth", 15, ["-25% Target Defense", "Regenerate Mana 15%", "Regenerate Mana 15%", "Regenerate Mana 15%"]],
+  ["Ith", 15, ["+9 to Maximum Damage", "15% Damage Taken Goes to Mana", "15% Damage Taken Goes to Mana", "15% Damage Taken Goes to Mana"]],
+  ["Tal", 17, ["+75 Poison Damage over 5 Seconds", "Poison Resist +30%", "Poison Resist +30%", "Poison Resist +35%"]],
+  ["Ral", 19, ["Adds 5-30 Fire Damage", "Fire Resist +30%", "Fire Resist +30%", "Fire Resist +35%"]],
+  ["Ort", 21, ["Adds 1-50 Lightning Damage", "Lightning Resist +30%", "Lightning Resist +30%", "Lightning Resist +35%"]],
+  ["Thul", 23, ["Adds 3-14 Cold Damage", "Cold Resist +30%", "Cold Resist +30%", "Cold Resist +35%"]],
+  ["Amn", 25, ["7% Life Stolen per Hit", "Attacker Takes Damage of 14", "Attacker Takes Damage of 14", "Attacker Takes Damage of 14"]],
+  ["Sol", 27, ["+9 to Minimum Damage", "Damage Reduced by 7", "Damage Reduced by 7", "Damage Reduced by 7"]],
+  ["Shael", 29, ["+20% Increased Attack Speed", "+20% Faster Hit Recovery", "+20% Faster Hit Recovery", "+20% Faster Block Rate"]],
+  ["Dol", 31, ["Hit Causes Monster to Flee 25%", "Replenish Life +7", "Replenish Life +7", "Replenish Life +7"]],
+  ["Hel", 33, ["Requirements -20%", "Requirements -15%", "Requirements -15%", "Requirements -15%"]],
+  ["Io", 35, "+10 to Vitality"],
+  ["Lum", 37, "+10 to Energy"],
+  ["Ko", 39, "+10 to Dexterity"],
+  ["Fal", 41, "+10 to Strength"],
+  ["Lem", 43, ["75% Extra Gold from Monsters", "50% Extra Gold from Monsters", "50% Extra Gold from Monsters", "50% Extra Gold from Monsters"]],
+  ["Pul", 45, ["+75% Damage to Demons, +100 to Attack Rating against Demons", "+30% Enhanced Defense", "+30% Enhanced Defense", "+30% Enhanced Defense"]],
+  ["Um", 47, ["25% Chance of Open Wounds", "All Resistances +15", "All Resistances +15", "All Resistances +22"]],
+  ["Mal", 49, ["Prevent Monster Heal", "Magic Damage Reduced by 7", "Magic Damage Reduced by 7", "Magic Damage Reduced by 7"]],
+  ["Ist", 51, ["30% Better Chance of Getting Magic Items", "25% Better Chance of Getting Magic Items", "25% Better Chance of Getting Magic Items", "25% Better Chance of Getting Magic Items"]],
+  ["Gul", 53, ["20% Bonus to Attack Rating", "+5% to Maximum Poison Resist", "+5% to Maximum Poison Resist", "+5% to Maximum Poison Resist"]],
+  ["Vex", 55, ["7% Mana Stolen per Hit", "+5% to Maximum Fire Resist", "+5% to Maximum Fire Resist", "+5% to Maximum Fire Resist"]],
+  ["Ohm", 57, ["+50% Enhanced Damage", "+5% to Maximum Cold Resist", "+5% to Maximum Cold Resist", "+5% to Maximum Cold Resist"]],
+  ["Lo", 59, ["20% Deadly Strike", "+5% to Maximum Lightning Resist", "+5% to Maximum Lightning Resist", "+5% to Maximum Lightning Resist"]],
+  ["Sur", 61, ["Hit Blinds Target", "Increase Maximum Mana 5%", "Increase Maximum Mana 5%", "+50 to Mana"]],
+  ["Ber", 63, ["20% Chance of Crushing Blow", "Damage Reduced by 8%", "Damage Reduced by 8%", "Damage Reduced by 8%"]],
+  ["Jah", 65, ["Ignore Target's Defense", "Increase Maximum Life 5%", "Increase Maximum Life 5%", "+50 to Life"]],
+  ["Cham", 67, ["Freezes Target +3", "Cannot Be Frozen", "Cannot Be Frozen", "Cannot Be Frozen"]],
+  ["Zod", 69, "Indestructible"],
+].map(([name, level, mods], i) => {
+  const [weapons, armor, helms, shields] = typeof mods === "string" ? [mods, mods, mods, mods] : mods;
+  return { name, level, number: i + 1, mods: { weapons, armor, helms, shields } };
+});
 
 // Matches the in-game Runes tab: 9 columns, with the last runes wrapping
-// around the Horadric Cube in the middle (null = empty space).
+// around the space where the Horadric Cube sits (null = empty space).
 export const RUNE_LAYOUT = [
   ["El", "Eld", "Tir", "Nef", "Eth", "Ith", "Tal", "Ral", "Ort"],
   ["Thul", "Amn", "Sol", "Shael", "Dol", "Hel", "Io", "Lum", "Ko"],
