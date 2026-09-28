@@ -25,6 +25,11 @@ python3 -m http.server 8000
 
 ## Hosting (GitHub Pages)
 
-1. In the repo, go to Settings → Pages and set Source to "Deploy from a branch", using `main` and `/ (root)`.
-2. At your DNS provider for `drnz.se`, add a `CNAME` record from `d2tools` to `draindrain.github.io`.
-3. The `CNAME` file in this repo sets the custom domain. Once DNS resolves, enable "Enforce HTTPS".
+Every push to `main` (including merged pull requests) deploys the site with the
+workflow in `.github/workflows/deploy.yml`. It can also be run by hand from the
+Actions tab.
+
+One-time setup:
+
+1. Settings → Pages: Source is "GitHub Actions", and Custom domain is `d2tools.drnz.se` with "Enforce HTTPS" on.
+2. At the DNS provider for `drnz.se`, a `CNAME` record points `d2tools` to `draindrain.github.io`.
