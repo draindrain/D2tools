@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D2 Tools</title>
+  <meta name="description" content="Tools for Diablo II: Resurrected.">
+  <link rel="stylesheet" href="assets/site.css">
+  <style>
+    .tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .tool { display: block; padding: 20px; text-decoration: none; color: var(--text); }
+    .tool:hover { border-color: var(--panel-edge-hi); }
+    .tool h2 { margin: 0 0 8px; font-size: 20px; }
+    .tool p { margin: 0; color: var(--muted); }
+    .tool.soon { opacity: .5; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="./">D2 Tools</a>
+    <nav>
+      <a href="runes/">Rune Tab</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Tools for Diablo II: Resurrected</h1>
+    <div class="tools">
+      <a class="tool panel" href="runes/">
+        <h2>Rune Tab</h2>
+        <p>Light up the runes you have and see which runewords you can make, filtered by slot, class and tier.</p>
+      </a>
+      <div class="tool panel soon">
+        <h2>More coming</h2>
+        <p>Further tools will show up here.</p>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">Not affiliated with Blizzard Entertainment.</footer>
+</body>
+</html>

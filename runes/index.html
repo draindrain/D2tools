@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rune Tab · D2 Tools</title>
+  <meta name="description" content="Light up the runes you own and see which Diablo II: Resurrected runewords you can make.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="runes.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../">D2 Tools</a>
+    <nav>
+      <a href="./" aria-current="page">Rune Tab</a>
+    </nav>
+  </header>
+
+  <!-- Shared paint for the rune stones; glyph paths are added by app.js -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs id="rune-defs">
+      <linearGradient id="stone-lit" x1="0" y1="0" x2="0.35" y2="1">
+        <stop offset="0%" stop-color="#e2e1dd"/>
+        <stop offset="55%" stop-color="#bcbbb6"/>
+        <stop offset="100%" stop-color="#8f8e89"/>
+      </linearGradient>
+      <linearGradient id="stone-dim" x1="0" y1="0" x2="0.35" y2="1">
+        <stop offset="0%" stop-color="#4b4b4a"/>
+        <stop offset="100%" stop-color="#303030"/>
+      </linearGradient>
+      <filter id="stone-noise" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="7" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.05" result="speck"/>
+        <feComposite in="speck" in2="SourceAlpha" operator="in"/>
+      </filter>
+      <path id="stone" d="M13.5 5.5C17 4.2 29 4.2 32.5 5.5C34.5 6.2 35.5 7.5 36.3 9.5L43.8 35.5C45 39.5 44 42.6 40 43.2C29 44.6 17 44.6 6 43.2C2 42.6 1 39.5 2.2 35.5L9.7 9.5C10.5 7.5 11.5 6.2 13.5 5.5Z"/>
+    </defs>
+  </svg>
+
+  <main>
+    <section class="stash" aria-label="Runes">
+      <div class="stash-grid" id="rune-grid" role="group" aria-label="Runes – click to light up the ones you have"></div>
+    </section>
+    <div class="stash-actions">
+      <button type="button" class="btn" data-action="all">Light all</button>
+      <button type="button" class="btn" data-action="clear">Clear</button>
+    </div>
+    <p class="stash-hint">Click a rune to light it up. Your selection is saved in the page link.</p>
+    <div class="rune-tip" id="rune-tip" hidden></div>
+
+    <section class="filters panel" aria-label="Filters">
+      <div class="filter-row">
+        <span class="filter-label">Slot</span>
+        <div class="chips" id="slot-chips"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Tier</span>
+        <div class="chips" id="tier-chips"></div>
+      </div>
+      <div class="filter-row filter-grid">
+        <label>
+          <span class="filter-label">Class</span>
+          <select id="class-select"></select>
+        </label>
+        <label>
+          <span class="filter-label">Show</span>
+          <select id="match-select">
+            <option value="0">Can make now</option>
+            <option value="1">Missing at most 1 rune</option>
+            <option value="2">Missing at most 2 runes</option>
+            <option value="all">All runewords</option>
+          </select>
+        </label>
+        <label>
+          <span class="filter-label">Sort</span>
+          <select id="sort-select">
+            <option value="tier">Tier</option>
+            <option value="level">Required level</option>
+            <option value="name">Name</option>
+          </select>
+        </label>
+        <label>
+          <span class="filter-label">Search</span>
+          <input id="search" type="search" placeholder="Name or stat, e.g. teleport" autocomplete="off">
+        </label>
+      </div>
+      <p class="filter-note" id="filter-note"></p>
+    </section>
+
+    <div id="results" aria-live="polite"></div>
+  </main>
+
+  <footer class="site-footer">
+    Tiers and class usage from the <a href="https://maxroll.gg/d2/tierlists/runeword-tier-list">maxroll.gg Runeword Tier List</a>
+    and <a href="https://maxroll.gg/d2/tierlists/overall-tier-list">Late Game build guides</a>.
+    Not affiliated with Blizzard Entertainment.
+  </footer>
+</body>
+</html>
