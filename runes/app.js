@@ -1,4 +1,5 @@
-import { RUNES, RUNE_LAYOUT, RUNEWORDS, RUNEWORD_TIERS, BUILDS, CLASSES, SLOTS } from "./data.js";
+import { RUNES, RUNE_LAYOUT, RUNEWORDS, RUNEWORD_TIERS, CLASSES, SLOTS } from "./data.js";
+import { usesFor, usageBlock } from "../assets/builds.js";
 import { GLYPHS } from "./glyphs.js";
 
 const TIERS = Object.keys(RUNEWORD_TIERS);
@@ -11,13 +12,6 @@ const RUNE_BY_NAME = new Map(RUNES.map((r) => [r.name.toLowerCase(), r]));
 const tierOf = new Map();
 for (const [tier, names] of Object.entries(RUNEWORD_TIERS)) {
   for (const name of names) tierOf.set(name, tier);
-}
-
-// runeword name -> [{ build, merc }]
-const usage = new Map(RUNEWORDS.map((rw) => [rw.name, []]));
-for (const build of BUILDS) {
-  for (const name of build.uses) usage.get(name).push({ build, merc: false });
-  for (const name of build.merc) usage.get(name).push({ build, merc: true });
 }
 
 // ---- State ------------------------------------------------------------------
@@ -247,10 +241,7 @@ function missingRunes(rw) {
 }
 
 function relevantUsage(rw) {
-  const all = usage.get(rw.name);
-  if (state.cls === "any") return all;
-  if (state.cls === "merc") return all.filter((u) => u.merc);
-  return all.filter((u) => !u.merc && u.build.cls === state.cls);
+  return usesFor(`r:${rw.name}`, state.cls);
 }
 
 function matches(rw) {
@@ -278,38 +269,6 @@ function compare(a, b) {
     || a.name.localeCompare(b.name);
 }
 
-function usageChips(rw) {
-  const uses = relevantUsage(rw);
-  const chips = [];
-
-  if (state.cls === "any") {
-    const counts = new Map();
-    for (const u of uses) {
-      const key = u.merc ? "merc" : u.build.cls;
-      counts.set(key, (counts.get(key) || 0) + 1);
-    }
-    for (const [key] of CLASSES) {
-      if (!counts.has(key)) continue;
-      const builds = uses
-        .filter((u) => (u.merc ? "merc" : u.build.cls) === key)
-        .map((u) => `${u.build.name} ${CLASS_NAME[u.build.cls]} (${u.build.tier})`);
-      chips.push({ html: `${CLASS_NAME[key]} <b>×${counts.get(key)}</b>`, title: builds.join("\n") });
-    }
-  } else {
-    const byTier = [...uses].sort((a, b) => TIERS.indexOf(a.build.tier) - TIERS.indexOf(b.build.tier));
-    for (const u of byTier) {
-      const label = state.cls === "merc"
-        ? `${u.build.name} ${CLASS_NAME[u.build.cls]}`
-        : u.build.name;
-      chips.push({
-        html: `${label} <b class="tier-${u.build.tier}">${u.build.tier}</b>`,
-        title: `${u.build.name} ${CLASS_NAME[u.build.cls]} – ${u.build.tier} tier build`,
-      });
-    }
-  }
-  return chips;
-}
-
 function tile(rw) {
   const tier = tierOf.get(rw.name);
   const missing = missingRunes(rw);
@@ -329,27 +288,8 @@ function tile(rw) {
     <ul class="tile-stats">${rw.stats.map((s) => `<li>${s}</li>`).join("")}</ul>
     ${rw.note ? `<div class="tile-note">${rw.note}</div>` : ""}`;
 
-  const chips = usageChips(rw);
-  if (chips.length) {
-    const box = document.createElement("div");
-    box.className = "tile-usage";
-    const limit = 8;
-    for (const c of chips.slice(0, limit)) {
-      const s = document.createElement("span");
-      s.className = "use-chip";
-      s.innerHTML = c.html;
-      s.title = c.title;
-      box.append(s);
-    }
-    if (chips.length > limit) {
-      const s = document.createElement("span");
-      s.className = "use-chip";
-      s.textContent = `+${chips.length - limit} more`;
-      s.title = chips.slice(limit).map((c) => c.title).join("\n");
-      box.append(s);
-    }
-    el.append(box);
-  }
+  const usage = usageBlock(`r:${rw.name}`, rw.name, state.cls);
+  if (usage) el.append(usage);
   return el;
 }
 
