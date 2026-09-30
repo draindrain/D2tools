@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Items · D2 Tools</title>
+  <meta name="description" content="Search Diablo II: Resurrected unique items, set items and runewords, track what you've found, and see which builds your gear covers.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/list.css">
+  <link rel="stylesheet" href="items.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../">D2 Tools</a>
+    <nav>
+      <a href="../runes/">Rune Tab</a>
+      <a href="./" aria-current="page">Items</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="tabs" role="tablist" aria-label="Items">
+      <button type="button" role="tab" id="tab-items" aria-controls="panel-items" data-tab="items">Uniques &amp; Sets</button>
+      <button type="button" role="tab" id="tab-runewords" aria-controls="panel-runewords" data-tab="runewords">Runewords</button>
+      <button type="button" role="tab" id="tab-builds" aria-controls="panel-builds" data-tab="builds">Builds</button>
+    </div>
+
+    <div class="found-bar" id="found-bar">
+      <span id="found-summary"></span>
+      <span class="found-actions">
+        <button type="button" class="btn" id="share-found">Copy share link</button>
+        <button type="button" class="btn" id="clear-found">Clear found</button>
+      </span>
+    </div>
+
+    <!-- Uniques & Sets -->
+    <section id="panel-items" role="tabpanel" aria-labelledby="tab-items" hidden>
+      <div class="filters panel" aria-label="Filters">
+        <div class="filter-row">
+          <span class="filter-label">Type</span>
+          <div class="chips" id="items-quality"></div>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">Slot</span>
+          <div class="chips" id="items-slots"></div>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">Rating</span>
+          <div class="chips" id="items-tiers"></div>
+        </div>
+        <div class="filter-row filter-grid">
+          <label>
+            <span class="filter-label">Class</span>
+            <select id="items-cls" data-key="cls"></select>
+          </label>
+          <label>
+            <span class="filter-label">Show</span>
+            <select id="items-show" data-key="show">
+              <option value="all">All items</option>
+              <option value="found">Found</option>
+              <option value="missing">Not found</option>
+            </select>
+          </label>
+          <label>
+            <span class="filter-label">Sort</span>
+            <select id="items-sort" data-key="sort">
+              <option value="rating">Rating</option>
+              <option value="builds">Number of builds</option>
+              <option value="level">Required level</option>
+              <option value="name">Name</option>
+            </select>
+          </label>
+          <label>
+            <span class="filter-label">Search</span>
+            <input id="items-q" data-key="q" type="search" placeholder="Name, base or stat, e.g. crushing" autocomplete="off">
+          </label>
+        </div>
+        <p class="filter-note" id="items-note"></p>
+      </div>
+      <div id="items-results" aria-live="polite"></div>
+    </section>
+
+    <!-- Runewords -->
+    <section id="panel-runewords" role="tabpanel" aria-labelledby="tab-runewords" hidden>
+      <div class="filters panel" aria-label="Filters">
+        <div class="filter-row">
+          <span class="filter-label">Slot</span>
+          <div class="chips" id="rw-slots"></div>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">Tier</span>
+          <div class="chips" id="rw-tiers"></div>
+        </div>
+        <div class="filter-row filter-grid">
+          <label>
+            <span class="filter-label">Class</span>
+            <select id="rw-cls" data-key="cls"></select>
+          </label>
+          <label>
+            <span class="filter-label">Show</span>
+            <select id="rw-show" data-key="show">
+              <option value="all">All runewords</option>
+              <option value="found">Found</option>
+              <option value="missing">Not found</option>
+              <option value="makeable">Can make from Rune Tab</option>
+            </select>
+          </label>
+          <label>
+            <span class="filter-label">Sort</span>
+            <select id="rw-sort" data-key="sort">
+              <option value="tier">Tier</option>
+              <option value="builds">Number of builds</option>
+              <option value="level">Required level</option>
+              <option value="name">Name</option>
+            </select>
+          </label>
+          <label>
+            <span class="filter-label">Search</span>
+            <input id="rw-q" data-key="q" type="search" placeholder="Name, rune or stat" autocomplete="off">
+          </label>
+        </div>
+        <p class="filter-note" id="rw-note"></p>
+      </div>
+      <div id="rw-results" aria-live="polite"></div>
+    </section>
+
+    <!-- Builds -->
+    <section id="panel-builds" role="tabpanel" aria-labelledby="tab-builds" hidden>
+      <div class="filters panel" aria-label="Filters">
+        <div class="filter-row filter-grid">
+          <label>
+            <span class="filter-label">Class</span>
+            <select id="builds-cls" data-key="cls"></select>
+          </label>
+          <label>
+            <span class="filter-label">Sort</span>
+            <select id="builds-sort" data-key="sort">
+              <option value="coverage">Slots covered</option>
+              <option value="best">Best-in-slot covered</option>
+              <option value="tier">Build tier</option>
+              <option value="name">Name</option>
+            </select>
+          </label>
+          <label>
+            <span class="filter-label">Search</span>
+            <input id="builds-q" data-key="q" type="search" placeholder="Build name" autocomplete="off">
+          </label>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="builds-makeable">
+          <span>Count runewords I can make from the runes lit on the <a href="../runes/">Rune Tab</a></span>
+        </label>
+        <p class="filter-note" id="builds-note"></p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span class="pill best owned">★ Best, found</span>
+        <span class="pill owned">Alternative, found</span>
+        <span class="pill makeable">Can make</span>
+        <span class="pill best">★ Best, missing</span>
+        <span class="pill">Missing</span>
+      </div>
+      <div id="builds-results" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Item data and build gear from the <a href="https://maxroll.gg/d2/d2planner">maxroll.gg D2 Planner</a> and
+    <a href="https://maxroll.gg/d2/tierlists/overall-tier-list">Late Game Tier List</a> build guides.
+    Runeword tiers from the <a href="https://maxroll.gg/d2/tierlists/runeword-tier-list">maxroll.gg Runeword Tier List</a>.
+    Not affiliated with Blizzard Entertainment.
+  </footer>
+</body>
+</html>

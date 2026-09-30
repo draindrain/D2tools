@@ -24,6 +24,7 @@
   --red: #d44a3a;
   --white: #e6e6e6;
   --gray: #8a8a8a;        /* socketed / base text */
+  --set: #1ec81e;         /* set item text */
   --title-font: "D2 Exocet", "Cinzel", Georgia, serif;
   --body-font: "D2 Exocet", "Cinzel", Georgia, serif;
   color-scheme: dark;
@@ -109,3 +110,18 @@ h1, h2, h3 {
   font-size: 14px;
   padding: 24px 16px 40px;
 }
+
+.btn {
+  font-family: var(--title-font);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+  background: linear-gradient(#2c251b, #17130e);
+  border: 1px solid var(--panel-edge);
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.btn:hover { border-color: var(--panel-edge-hi); color: var(--gold); }
